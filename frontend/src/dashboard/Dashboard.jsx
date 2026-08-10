@@ -1,12 +1,58 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
-import { CloudRain, Sprout, TrendingUp, AlertTriangle } from 'lucide-react';
+import { CloudRain, Sprout, TrendingUp, AlertTriangle, Loader2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 export function Dashboard() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  
+  const [weather, setWeather] = useState({ temp: null, desc: '', risk: t('low'), loading: true });
+
+  useEffect(() => {
+    async function fetchWeather() {
+      try {
+        const storedUser = localStorage.getItem('kisanSetuUser');
+        let lat = 28.6139; // Default: New Delhi
+        let lng = 77.2090;
+
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          if (user.lat && user.lng) {
+            lat = user.lat;
+            lng = user.lng;
+          }
+        }
+
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current_weather=true`);
+        const data = await res.json();
+        
+        if (data.current_weather) {
+          const w = data.current_weather;
+          let desc = lang === 'en' ? 'Clear Skies' : 'साफ आसमान';
+          let risk = t('low');
+          
+          if (w.weathercode > 50 && w.weathercode < 70) {
+            desc = lang === 'en' ? 'Rain Expected' : 'बारिश की संभावना';
+            risk = t('medium');
+          } else if (w.weathercode >= 70) {
+            desc = lang === 'en' ? 'Heavy Rain/Storms' : 'भारी बारिश/तूफान';
+            risk = t('high');
+          } else if (w.weathercode > 0 && w.weathercode <= 3) {
+            desc = lang === 'en' ? 'Partly Cloudy' : 'आंशिक बादल';
+          }
+
+          setWeather({ temp: w.temperature, desc, risk, loading: false });
+        }
+      } catch (err) {
+        console.error("Failed to fetch weather", err);
+        setWeather({ temp: 32, desc: 'Sunny', risk: t('low'), loading: false }); // fallback
+      }
+    }
+    
+    fetchWeather();
+  }, [t, lang]);
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 animate-fade-in">
@@ -42,14 +88,22 @@ export function Dashboard() {
             <div className="flex justify-between items-start">
               <div className="space-y-2">
                 <p className="text-sm font-medium text-surface-500">{t('weatherRisk')}</p>
-                <p className="text-2xl font-bold text-surface-900">{t('low')}</p>
+                {weather.loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin text-brand-500" />
+                ) : (
+                  <p className="text-2xl font-bold text-surface-900">{weather.temp !== null ? `${weather.temp}°C` : weather.risk}</p>
+                )}
               </div>
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <CloudRain className="w-5 h-5 text-blue-700" />
+              <div className={`p-2 rounded-lg ${weather.risk === t('high') ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
+                <CloudRain className="w-5 h-5" />
               </div>
             </div>
-            <div className="mt-4 text-sm text-surface-600">
-              Clear skies expected for the next 5 days.
+            <div className="mt-4 text-sm text-surface-600 font-medium">
+              {!weather.loading && (
+                <>
+                  <span className="text-brand-600">{weather.desc}</span> • {lang === 'en' ? 'Risk:' : 'जोखिम:'} {weather.risk}
+                </>
+              )}
             </div>
           </CardContent>
         </Card>

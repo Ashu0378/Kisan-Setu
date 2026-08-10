@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Sprout } from 'lucide-react';
+import { Sprout, MapPin, Loader2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 export function Register() {
@@ -14,8 +14,36 @@ export function Register() {
     phone: '',
     landSize: '',
     soilType: 'Alluvial',
-    district: ''
+    district: '',
+    lat: null,
+    lng: null
   });
+
+  const [locating, setLocating] = useState(false);
+
+  const handleGetLocation = () => {
+    setLocating(true);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setFormData(prev => ({
+            ...prev,
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            district: "Detected Automatically"
+          }));
+          setLocating(false);
+        },
+        (error) => {
+          console.error("Error getting location", error);
+          setLocating(false);
+          alert(lang === 'en' ? 'Could not get location.' : 'स्थान प्राप्त नहीं हो सका।');
+        }
+      );
+    } else {
+      setLocating(false);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,7 +53,7 @@ export function Register() {
   
   const handleRegister = (e) => {
     e.preventDefault();
-    // Normally this would call the backend API to create the farmer profile
+    localStorage.setItem('kisanSetuUser', JSON.stringify(formData));
     console.log("Registered Profile:", formData);
     navigate('/dashboard');
   };
@@ -122,17 +150,27 @@ export function Register() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 mb-1">
-                      {lang === 'en' ? 'District / State' : 'ज़िला / राज्य'}
+                      {lang === 'en' ? 'Location (GPS)' : 'स्थान (GPS)'}
                     </label>
-                    <input 
-                      type="text" 
-                      name="district"
-                      required
-                      value={formData.district}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 rounded-xl border border-surface-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
-                      placeholder={lang === 'en' ? "e.g., Karnal, Haryana" : "जैसे, करनाल, हरियाणा"}
-                    />
+                    <div className="flex gap-2">
+                      <input 
+                        type="text" 
+                        name="district"
+                        required
+                        value={formData.district}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 rounded-xl border border-surface-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+                        placeholder={lang === 'en' ? "e.g., Karnal, Haryana" : "जैसे, करनाल, हरियाणा"}
+                      />
+                      <Button type="button" variant="outline" onClick={handleGetLocation} className="whitespace-nowrap px-3" disabled={locating}>
+                        {locating ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4 text-brand-600" />}
+                      </Button>
+                    </div>
+                    {formData.lat && (
+                      <p className="text-xs text-brand-600 mt-1">
+                        {lang === 'en' ? 'GPS Coordinates Captured!' : 'जीपीएस निर्देशांक प्राप्त!'}
+                      </p>
+                    )}
                   </div>
                   <div className="flex gap-2 mt-4">
                     <Button type="button" variant="secondary" className="w-1/3" onClick={() => setStep(1)}>
