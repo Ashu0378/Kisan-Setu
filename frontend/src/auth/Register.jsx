@@ -31,7 +31,7 @@ export function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-surface-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-brand-50 via-surface-50 to-brand-100 flex items-center justify-center p-4">
       <div className="absolute top-4 right-4">
         <Button variant="outline" size="sm" onClick={toggleLanguage}>
           {lang === 'en' ? 'हिन्दी' : 'English'}

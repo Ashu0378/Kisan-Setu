@@ -39,7 +39,7 @@ export function Layout() {
   const { lang, t, toggleLanguage } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-surface-50 flex">
+    <div className="min-h-screen bg-gradient-to-br from-brand-50 via-surface-50 to-brand-100 flex">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div 
@@ -50,7 +50,7 @@ export function Layout() {
 
       {/* Sidebar */}
       <div className={cn(
-        "fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-surface-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-64 flex flex-col",
+        "fixed inset-y-0 left-0 z-50 w-72 bg-white/60 backdrop-blur-2xl border-r border-white/60 shadow-[4px_0_24px_rgba(34,197,94,0.05)] transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:w-64 flex flex-col",
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="h-16 flex items-center px-6 border-b border-surface-100">
@@ -78,8 +78,8 @@ export function Layout() {
               className={({ isActive }) => cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all duration-300 hover:translate-x-1",
                 isActive 
-                  ? "bg-brand-100 text-brand-800 shadow-sm" 
-                  : "text-surface-600 hover:bg-surface-100 hover:text-surface-900"
+                  ? "bg-gradient-to-r from-brand-500 to-brand-400 text-white shadow-md shadow-brand-500/20" 
+                  : "text-surface-600 hover:bg-white/60 hover:text-brand-700 hover:shadow-sm"
               )}
             >
               <item.icon className="w-5 h-5 flex-shrink-0" />
@@ -101,7 +101,7 @@ export function Layout() {
 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <header className="h-16 bg-white/80 backdrop-blur-md border-b border-surface-200 flex items-center justify-between px-4 sm:px-6 z-10">
+        <header className="h-16 bg-white/60 backdrop-blur-2xl border-b border-white/60 flex items-center justify-between px-4 sm:px-6 z-10">
           <button 
             className="lg:hidden text-surface-500 hover:text-surface-900"
             onClick={() => setSidebarOpen(true)}
