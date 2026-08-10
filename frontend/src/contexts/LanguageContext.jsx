@@ -3,6 +3,7 @@ import React, { createContext, useState, useContext } from 'react';
 const translations = {
   en: {
     dashboard: "Dashboard",
+    myProfile: "My Profile",
     cropPlanner: "Crop Planner",
     yieldPredictor: "Yield Predictor",
     coldGuard: "ColdGuard Risk",
@@ -29,6 +30,7 @@ const translations = {
   },
   hi: {
     dashboard: "डैशबोर्ड",
+    myProfile: 'मेरी प्रोफ़ाइल',
     cropPlanner: "फसल योजनाकार",
     yieldPredictor: "उपज भविष्यवक्ता",
     coldGuard: "कोल्डगार्ड जोखिम",

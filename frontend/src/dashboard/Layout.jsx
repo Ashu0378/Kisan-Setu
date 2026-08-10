@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, Link } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Sprout, 
@@ -23,6 +23,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 
 const navigation = [
   { name: 'Dashboard', translationKey: 'dashboard', href: '/', icon: LayoutDashboard },
+  { name: 'My Profile', translationKey: 'myProfile', href: '/profile', icon: UserCircle },
   { name: 'Crop Planner', translationKey: 'cropPlanner', href: '/crop-planner', icon: Sprout },
   { name: 'Yield Predictor', translationKey: 'yieldPredictor', href: '/yield-predictor', icon: BarChart3 },
   { name: 'ColdGuard Risk', translationKey: 'coldGuard', href: '/coldguard', icon: ThermometerSnowflake },
@@ -187,9 +188,9 @@ export function Layout() {
                     <p className="text-xs text-surface-500">+91 98765 43210</p>
                   </div>
                   <div className="py-1">
-                    <button className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 flex items-center gap-2">
-                      <MapPin className="w-4 h-4" /> {lang === 'en' ? 'Update Farm Location' : 'खेत का स्थान अपडेट करें'}
-                    </button>
+                    <Link to="/profile" className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 flex items-center gap-2" onClick={() => setShowProfile(false)}>
+                      <MapPin className="w-4 h-4" /> {lang === 'en' ? 'Update Farm Details' : 'खेत का विवरण अपडेट करें'}
+                    </Link>
                     <button className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 flex items-center gap-2">
                       <Leaf className="w-4 h-4" /> {lang === 'en' ? 'Soil Health Card' : 'मृदा स्वास्थ्य कार्ड'}
                     </button>
