@@ -75,6 +75,7 @@ export function Layout() {
             <NavLink
               key={item.name}
               to={item.href}
+              end={item.href === '/dashboard'}
               className={({ isActive }) => cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all duration-300 hover:translate-x-1",
                 isActive 

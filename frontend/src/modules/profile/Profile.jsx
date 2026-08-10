@@ -5,7 +5,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import { UserCircle, Save, MapPin, Leaf, Phone } from 'lucide-react';
 
 export function Profile() {
-  const { lang, t } = useLanguage();
+  const { lang } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: 'Ramesh Kumar',
