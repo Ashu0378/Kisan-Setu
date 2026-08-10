@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/Ca
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { Sprout, Droplets, Banknote, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Sprout, Droplets, ShieldCheck } from 'lucide-react';
 
 export function CropPlanner() {
   const { lang } = useLanguage();

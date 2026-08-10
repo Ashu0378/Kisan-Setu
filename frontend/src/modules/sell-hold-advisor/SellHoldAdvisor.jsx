@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/Card';
+import { Card, CardContent } from '../../components/ui/Card';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { PiggyBank, Calendar, Info } from 'lucide-react';
+import { PiggyBank, Info } from 'lucide-react';
 
 export function SellHoldAdvisor() {
   const { lang } = useLanguage();

@@ -10,7 +10,12 @@ import {
   Menu,
   X,
   Bell,
-  UserCircle
+  UserCircle,
+  HelpCircle,
+  Settings,
+  LogOut,
+  MapPin,
+  Leaf
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Button } from '../components/ui/Button';
@@ -28,6 +33,9 @@ const navigation = [
 
 export function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const { lang, t, toggleLanguage } = useLanguage();
 
   return (
@@ -103,17 +111,99 @@ export function Layout() {
           
           <div className="flex-1" />
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4 relative">
             <Button variant="ghost" size="sm" onClick={toggleLanguage} className="hidden sm:flex font-semibold">
               {lang === 'en' ? 'हिन्दी' : 'English'}
             </Button>
-            <button className="relative p-2 text-surface-500 hover:text-brand-600 transition-colors">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
-            </button>
-            <Button variant="outline" size="sm" className="hidden sm:inline-flex">
-              Need Help?
-            </Button>
+            
+            {/* Notifications */}
+            <div className="relative">
+              <button 
+                className="relative p-2 text-surface-500 hover:text-brand-600 transition-colors"
+                onClick={() => { setShowNotifications(!showNotifications); setShowHelp(false); setShowProfile(false); }}
+              >
+                <Bell className="w-5 h-5" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
+              </button>
+              {showNotifications && (
+                <div className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-surface-200 overflow-hidden z-50 animate-fade-in">
+                  <div className="p-3 border-b border-surface-100 font-semibold bg-surface-50 text-surface-900">
+                    {lang === 'en' ? 'Notifications' : 'सूचनाएं'}
+                  </div>
+                  <div className="max-h-64 overflow-y-auto">
+                    <div className="p-3 border-b border-surface-100 hover:bg-surface-50 cursor-pointer">
+                      <p className="text-sm font-medium text-surface-900">{lang === 'en' ? 'Irrigation Due' : 'सिंचाई का समय'}</p>
+                      <p className="text-xs text-surface-500 mt-0.5">{lang === 'en' ? 'Wheat field needs water today.' : 'गेहूं के खेत में आज पानी की आवश्यकता है।'}</p>
+                    </div>
+                    <div className="p-3 hover:bg-surface-50 cursor-pointer">
+                      <p className="text-sm font-medium text-brand-700">{lang === 'en' ? 'Market Price Alert' : 'बाजार मूल्य अलर्ट'}</p>
+                      <p className="text-xs text-surface-500 mt-0.5">{lang === 'en' ? 'Mustard prices rose by 5% in Karnal.' : 'करनाल में सरसों के दाम 5% बढ़े।'}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Help Section */}
+            <div className="relative hidden sm:block">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => { setShowHelp(!showHelp); setShowNotifications(false); setShowProfile(false); }}
+                className="flex items-center gap-2"
+              >
+                <HelpCircle className="w-4 h-4" />
+                {lang === 'en' ? 'Help' : 'मदद'}
+              </Button>
+              {showHelp && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-surface-200 overflow-hidden z-50 animate-fade-in">
+                  <div className="py-1">
+                    <button className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 transition-colors">
+                      {lang === 'en' ? 'Call Kisan Call Center' : 'किसान कॉल सेंटर'}
+                    </button>
+                    <button className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 transition-colors">
+                      {lang === 'en' ? 'Video Tutorials' : 'वीडियो ट्यूटोरियल'}
+                    </button>
+                    <button className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 transition-colors">
+                      {lang === 'en' ? 'Connect to Expert' : 'विशेषज्ञ से जुड़ें'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* User Profile */}
+            <div className="relative">
+              <button 
+                className="p-1 rounded-full border-2 border-surface-200 hover:border-brand-500 transition-colors text-surface-500 hover:text-brand-600"
+                onClick={() => { setShowProfile(!showProfile); setShowNotifications(false); setShowHelp(false); }}
+              >
+                <UserCircle className="w-6 h-6" />
+              </button>
+              {showProfile && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-surface-200 overflow-hidden z-50 animate-fade-in">
+                  <div className="p-3 border-b border-surface-100 bg-surface-50">
+                    <p className="text-sm font-semibold text-surface-900">Ramesh Kumar</p>
+                    <p className="text-xs text-surface-500">+91 98765 43210</p>
+                  </div>
+                  <div className="py-1">
+                    <button className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 flex items-center gap-2">
+                      <MapPin className="w-4 h-4" /> {lang === 'en' ? 'Update Farm Location' : 'खेत का स्थान अपडेट करें'}
+                    </button>
+                    <button className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 flex items-center gap-2">
+                      <Leaf className="w-4 h-4" /> {lang === 'en' ? 'Soil Health Card' : 'मृदा स्वास्थ्य कार्ड'}
+                    </button>
+                    <button className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 flex items-center gap-2">
+                      <Settings className="w-4 h-4" /> {lang === 'en' ? 'App Settings' : 'ऐप सेटिंग्स'}
+                    </button>
+                    <div className="border-t border-surface-100 my-1"></div>
+                    <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
+                      <LogOut className="w-4 h-4" /> {lang === 'en' ? 'Sign Out' : 'लॉग आउट'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
