@@ -22,13 +22,13 @@ import { Button } from '../components/ui/Button';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const navigation = [
-  { name: 'Dashboard', translationKey: 'dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Crop Planner', translationKey: 'cropPlanner', href: '/crop-planner', icon: Sprout },
-  { name: 'Yield Predictor', translationKey: 'yieldPredictor', href: '/yield-predictor', icon: BarChart3 },
-  { name: 'ColdGuard Risk', translationKey: 'coldGuard', href: '/coldguard', icon: ThermometerSnowflake },
-  { name: 'Mandi Optimizer', translationKey: 'mandiOptimizer', href: '/mandi-optimizer', icon: TrendingUp },
-  { name: 'Sell/Hold Advisor', translationKey: 'sellHold', href: '/sell-hold', icon: PiggyBank },
-  { name: 'SchemeMatch AI', translationKey: 'schemeMatch', href: '/schemematch', icon: PiggyBank },
+  { name: 'Dashboard', translationKey: 'dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Crop Planner', translationKey: 'cropPlanner', href: '/dashboard/crop-planner', icon: Sprout },
+  { name: 'Yield Predictor', translationKey: 'yieldPredictor', href: '/dashboard/yield-predictor', icon: BarChart3 },
+  { name: 'ColdGuard Risk', translationKey: 'coldGuard', href: '/dashboard/coldguard', icon: ThermometerSnowflake },
+  { name: 'Mandi Optimizer', translationKey: 'mandiOptimizer', href: '/dashboard/mandi-optimizer', icon: TrendingUp },
+  { name: 'Sell/Hold Advisor', translationKey: 'sellHold', href: '/dashboard/sell-hold', icon: PiggyBank },
+  { name: 'SchemeMatch AI', translationKey: 'schemeMatch', href: '/dashboard/schemematch', icon: PiggyBank },
 ];
 
 export function Layout() {
@@ -91,7 +91,7 @@ export function Layout() {
         {/* Bottom Left Profile Section */}
         <div className="p-4 border-t border-surface-200">
           <Link 
-            to="/profile" 
+            to="/dashboard/profile" 
             className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/60 hover:shadow-sm transition-all duration-300 group"
             onClick={() => setSidebarOpen(false)}
           >
@@ -194,7 +194,7 @@ export function Layout() {
                     <p className="text-xs text-surface-500">+91 98765 43210</p>
                   </div>
                   <div className="py-1">
-                    <Link to="/profile" className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 flex items-center gap-2" onClick={() => setShowProfile(false)}>
+                    <Link to="/dashboard/profile" className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 flex items-center gap-2" onClick={() => setShowProfile(false)}>
                       <MapPin className="w-4 h-4" /> {lang === 'en' ? 'Update Farm Details' : 'खेत का विवरण अपडेट करें'}
                     </Link>
                     <button className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 flex items-center gap-2">
@@ -204,9 +204,9 @@ export function Layout() {
                       <Settings className="w-4 h-4" /> {lang === 'en' ? 'App Settings' : 'ऐप सेटिंग्स'}
                     </button>
                     <div className="border-t border-surface-100 my-1"></div>
-                    <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
+                    <Link to="/" className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2" onClick={() => setShowProfile(false)}>
                       <LogOut className="w-4 h-4" /> {lang === 'en' ? 'Sign Out' : 'लॉग आउट'}
-                    </button>
+                    </Link>
                   </div>
                 </div>
               )}

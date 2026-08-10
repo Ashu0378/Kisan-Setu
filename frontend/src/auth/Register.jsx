@@ -27,7 +27,7 @@ export function Register() {
     e.preventDefault();
     // Normally this would call the backend API to create the farmer profile
     console.log("Registered Profile:", formData);
-    navigate('/');
+    navigate('/dashboard');
   };
 
   return (
@@ -147,7 +147,7 @@ export function Register() {
               
               <div className="mt-6 text-center text-sm text-surface-600 border-t border-surface-100 pt-4">
                 {lang === 'en' ? 'Already have an account?' : 'पहले से खाता है?'}{' '}
-                <Link to="/signin" className="text-brand-600 hover:text-brand-700 font-bold">
+                <Link to="/" className="text-brand-600 hover:text-brand-700 font-bold">
                   {lang === 'en' ? 'Sign In' : 'साइन इन करें'}
                 </Link>
               </div>

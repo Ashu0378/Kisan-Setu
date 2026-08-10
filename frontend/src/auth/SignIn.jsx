@@ -20,7 +20,7 @@ export function SignIn() {
   const handleSignIn = (e) => {
     e.preventDefault();
     console.log("Signing in:", formData);
-    navigate('/');
+    navigate('/dashboard');
   };
 
   return (
