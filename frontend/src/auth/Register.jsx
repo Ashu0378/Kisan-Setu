@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Sprout } from 'lucide-react';
@@ -144,6 +144,13 @@ export function Register() {
                   </div>
                 </div>
               )}
+              
+              <div className="mt-6 text-center text-sm text-surface-600 border-t border-surface-100 pt-4">
+                {lang === 'en' ? 'Already have an account?' : 'पहले से खाता है?'}{' '}
+                <Link to="/signin" className="text-brand-600 hover:text-brand-700 font-bold">
+                  {lang === 'en' ? 'Sign In' : 'साइन इन करें'}
+                </Link>
+              </div>
             </CardContent>
           </form>
         </Card>

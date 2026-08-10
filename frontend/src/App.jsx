@@ -3,6 +3,7 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import { Layout } from './dashboard/Layout';
 import { Dashboard } from './dashboard/Dashboard';
 import { Register } from './auth/Register';
+import { SignIn } from './auth/SignIn';
 import { Profile } from './modules/profile/Profile';
 import { CropPlanner } from './modules/crop-planner/CropPlanner';
 import { YieldPredictor } from './modules/yield-predictor/YieldPredictor';
@@ -17,6 +18,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/register" element={<Register />} />
+          <Route path="/signin" element={<SignIn />} />
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="profile" element={<Profile />} />
