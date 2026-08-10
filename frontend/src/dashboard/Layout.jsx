@@ -23,7 +23,6 @@ import { useLanguage } from '../contexts/LanguageContext';
 
 const navigation = [
   { name: 'Dashboard', translationKey: 'dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'My Profile', translationKey: 'myProfile', href: '/profile', icon: UserCircle },
   { name: 'Crop Planner', translationKey: 'cropPlanner', href: '/crop-planner', icon: Sprout },
   { name: 'Yield Predictor', translationKey: 'yieldPredictor', href: '/yield-predictor', icon: BarChart3 },
   { name: 'ColdGuard Risk', translationKey: 'coldGuard', href: '/coldguard', icon: ThermometerSnowflake },
@@ -89,14 +88,21 @@ export function Layout() {
           ))}
         </nav>
         
-        <div className="p-4 border-t border-surface-100">
-          <div className="glass-panel p-4 flex items-center gap-3 hover:shadow-hover-glow transition-all duration-300 cursor-pointer hover:-translate-y-0.5">
-            <UserCircle className="w-10 h-10 text-brand-600" />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-surface-900 truncate">Ramesh Kumar</p>
-              <p className="text-xs text-surface-500 truncate">Profile: 85% Complete</p>
+        {/* Bottom Left Profile Section */}
+        <div className="p-4 border-t border-surface-200">
+          <Link 
+            to="/profile" 
+            className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/60 hover:shadow-sm transition-all duration-300 group"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <div className="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center border-2 border-transparent group-hover:border-brand-300 transition-colors">
+              <UserCircle className="w-6 h-6 text-brand-700" />
             </div>
-          </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-surface-900 truncate">Ramesh Kumar</p>
+              <p className="text-xs text-surface-500 truncate">{t('myProfile')}</p>
+            </div>
+          </Link>
         </div>
       </div>
 
