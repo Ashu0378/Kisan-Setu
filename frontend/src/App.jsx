@@ -17,9 +17,9 @@ function App() {
     <LanguageProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<SignIn />} />
+          <Route path="/signin" element={<SignIn />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Layout />}>
+          <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="profile" element={<Profile />} />
             <Route path="crop-planner" element={<CropPlanner />} />

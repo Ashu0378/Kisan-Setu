@@ -55,7 +55,7 @@ export function Register() {
     e.preventDefault();
     localStorage.setItem('kisanSetuUser', JSON.stringify(formData));
     console.log("Registered Profile:", formData);
-    navigate('/dashboard');
+    navigate('/');
   };
 
   return (
@@ -185,7 +185,7 @@ export function Register() {
               
               <div className="mt-6 text-center text-sm text-surface-600 border-t border-surface-100 pt-4">
                 {lang === 'en' ? 'Already have an account?' : 'पहले से खाता है?'}{' '}
-                <Link to="/" className="text-brand-600 hover:text-brand-700 font-bold">
+                <Link to="/signin" className="text-brand-600 hover:text-brand-700 font-bold">
                   {lang === 'en' ? 'Sign In' : 'साइन इन करें'}
                 </Link>
               </div>
