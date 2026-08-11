@@ -11,11 +11,13 @@ import { ColdGuard } from './modules/coldguard/ColdGuard';
 import { MandiOptimizer } from './modules/mandi-optimizer/MandiOptimizer';
 import { SellHoldAdvisor } from './modules/sell-hold-advisor/SellHoldAdvisor';
 import { SchemeMatch } from './modules/schemematch/SchemeMatch';
+import { VoiceAssistant } from './components/VoiceAssistant';
 
 function App() {
   return (
     <LanguageProvider>
       <Router>
+        <VoiceAssistant />
         <Routes>
           <Route path="/signin" element={<SignIn />} />
           <Route path="/register" element={<Register />} />
