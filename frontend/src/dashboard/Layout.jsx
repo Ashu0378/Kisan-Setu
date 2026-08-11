@@ -108,7 +108,7 @@ export function Layout() {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden pb-16 lg:pb-0">
         <header className="h-16 bg-white/60 backdrop-blur-2xl border-b border-white/60 flex items-center justify-between px-4 sm:px-6 z-10">
           <button 
             className="lg:hidden text-surface-500 hover:text-surface-900"
@@ -120,7 +120,7 @@ export function Layout() {
           <div className="flex-1" />
           
           <div className="flex items-center gap-3 sm:gap-4 relative">
-            <Button variant="ghost" size="sm" onClick={toggleLanguage} className="hidden sm:flex font-semibold">
+            <Button variant="ghost" size="sm" onClick={toggleLanguage} className="flex font-semibold">
               {lang === 'en' ? 'हिन्दी' : 'English'}
             </Button>
             
@@ -148,6 +148,9 @@ export function Layout() {
                       <p className="text-xs text-surface-500 mt-0.5">{lang === 'en' ? 'Mustard prices rose by 5% in Karnal.' : 'करनाल में सरसों के दाम 5% बढ़े।'}</p>
                     </div>
                   </div>
+                  <div className="p-2 border-t border-surface-100 bg-surface-50 text-center">
+                    <button className="text-xs font-semibold text-brand-600 hover:text-brand-700">{lang === 'en' ? 'Mark all as read' : 'सभी को पढ़ा हुआ मानें'}</button>
+                  </div>
                 </div>
               )}
             </div>
@@ -164,17 +167,14 @@ export function Layout() {
                 {lang === 'en' ? 'Help' : 'मदद'}
               </Button>
               {showHelp && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-surface-200 overflow-hidden z-50 animate-fade-in">
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-surface-200 overflow-hidden z-50 animate-fade-in">
+                  <div className="p-3 border-b border-surface-100 font-semibold bg-surface-50 text-surface-900">
+                    {lang === 'en' ? 'Help & Support' : 'सहायता और समर्थन'}
+                  </div>
                   <div className="py-1">
-                    <button className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 transition-colors">
-                      {lang === 'en' ? 'Call Kisan Call Center' : 'किसान कॉल सेंटर'}
-                    </button>
-                    <button className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 transition-colors">
-                      {lang === 'en' ? 'Video Tutorials' : 'वीडियो ट्यूटोरियल'}
-                    </button>
-                    <button className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 transition-colors">
-                      {lang === 'en' ? 'Connect to Expert' : 'विशेषज्ञ से जुड़ें'}
-                    </button>
+                    <button className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600">{lang === 'en' ? 'Watch Tutorials' : 'ट्यूटोरियल देखें'}</button>
+                    <button className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600">{lang === 'en' ? 'Contact KVK Expert' : 'KVK विशेषज्ञ से संपर्क करें'}</button>
+                    <button className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600">{lang === 'en' ? 'Report an Issue' : 'समस्या की रिपोर्ट करें'}</button>
                   </div>
                 </div>
               )}
@@ -215,9 +215,25 @@ export function Layout() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-surface-50/50">
           <Outlet />
         </main>
+      </div>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-white/60 shadow-[0_-4px_24px_rgba(0,0,0,0.05)] z-50 px-6 py-3 flex justify-between items-center">
+        <NavLink to="/" end className={({ isActive }) => cn("flex flex-col items-center gap-1 transition-colors", isActive ? "text-brand-600" : "text-surface-400 hover:text-surface-600")}>
+          <LayoutDashboard className="w-6 h-6" />
+        </NavLink>
+        <NavLink to="/crop-planner" className={({ isActive }) => cn("flex flex-col items-center gap-1 transition-colors", isActive ? "text-brand-600" : "text-surface-400 hover:text-surface-600")}>
+          <Sprout className="w-6 h-6" />
+        </NavLink>
+        <NavLink to="/mandi-optimizer" className={({ isActive }) => cn("flex flex-col items-center gap-1 transition-colors", isActive ? "text-brand-600" : "text-surface-400 hover:text-surface-600")}>
+          <TrendingUp className="w-6 h-6" />
+        </NavLink>
+        <NavLink to="/profile" className={({ isActive }) => cn("flex flex-col items-center gap-1 transition-colors", isActive ? "text-brand-600" : "text-surface-400 hover:text-surface-600")}>
+          <UserCircle className="w-6 h-6" />
+        </NavLink>
       </div>
     </div>
   );
