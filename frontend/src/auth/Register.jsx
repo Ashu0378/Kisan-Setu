@@ -44,26 +44,63 @@ export function Register() {
   };
 
   const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      alert(lang === 'en' ? 'Geolocation is not supported by your browser.' : 'आपका ब्राउज़र जियोलोकेशन का समर्थन नहीं करता।');
+      return;
+    }
     setLocating(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
+    setError('');
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          // Reverse geocode using OpenStreetMap Nominatim (free, no API key needed)
+          const resp = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`,
+            { headers: { 'Accept-Language': 'en' } }
+          );
+          const data = await resp.json();
+          const addr = data.address || {};
+
+          // Extract district and state from Nominatim response
+          const detectedDistrict =
+            addr.county ||
+            addr.district ||
+            addr.city_district ||
+            addr.city ||
+            addr.town ||
+            addr.village ||
+            '';
+
+          const detectedState = addr.state || '';
+
           setFormData((prev) => ({
             ...prev,
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-            district: prev.district || 'Detected Automatically',
+            lat: latitude,
+            lng: longitude,
+            district: detectedDistrict || prev.district,
+            state: detectedState || prev.state,
           }));
+        } catch {
+          // Even if reverse geocoding fails, save raw coordinates
+          setFormData((prev) => ({ ...prev, lat: latitude, lng: longitude }));
+          setError(lang === 'en' ? 'Got GPS location but could not detect district. Please enter manually.' : 'GPS मिला लेकिन जिला पता नहीं चला। कृपया मैन्युअल दर्ज करें।');
+        } finally {
           setLocating(false);
-        },
-        () => {
-          setLocating(false);
-          alert(lang === 'en' ? 'Could not get location.' : 'स्थान प्राप्त नहीं हो सका।');
         }
-      );
-    } else {
-      setLocating(false);
-    }
+      },
+      (err) => {
+        setLocating(false);
+        const messages = {
+          1: lang === 'en' ? 'Location permission denied. Please allow access in browser settings.' : 'स्थान अनुमति अस्वीकृत। कृपया ब्राउज़र सेटिंग में अनुमति दें।',
+          2: lang === 'en' ? 'Location unavailable. Try again.' : 'स्थान उपलब्ध नहीं। पुनः प्रयास करें।',
+          3: lang === 'en' ? 'Location request timed out.' : 'स्थान अनुरोध समय समाप्त।',
+        };
+        setError(messages[err.code] || (lang === 'en' ? 'Could not get location.' : 'स्थान प्राप्त नहीं हो सका।'));
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
   };
 
   const handleNext = (e) => {
@@ -242,8 +279,11 @@ export function Register() {
                       </Button>
                     </div>
                     {formData.lat && (
-                      <p className="text-xs text-brand-600 mt-1">
-                        {lang === 'en' ? 'GPS Coordinates Captured!' : 'जीपीएस निर्देशांक प्राप्त!'}
+                      <p className="text-xs text-brand-600 mt-1 flex items-center gap-1">
+                        <MapPin className="w-3 h-3" />
+                        {formData.district && formData.state
+                          ? `${formData.district}, ${formData.state}`
+                          : lang === 'en' ? '✓ GPS Coordinates Captured!' : '✓ जीपीएस निर्देशांक प्राप्त!'}
                       </p>
                     )}
                   </div>
