@@ -12,7 +12,11 @@ export function SignIn() {
   const { lang, toggleLanguage } = useLanguage();
   const { login } = useAuth();
 
-  const [formData, setFormData] = useState({ phone: '', password: '' });
+  // Read success message passed from Register page
+  const registeredMsg = location.state?.message || '';
+  const registeredPhone = location.state?.phone || '';
+
+  const [formData, setFormData] = useState({ phone: registeredPhone, password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -63,6 +67,14 @@ export function SignIn() {
           <form onSubmit={handleSignIn}>
             <CardContent className="pt-6">
               <div className="space-y-4 animate-fade-in">
+
+              {/* Registration success banner */}
+                {registeredMsg && (
+                  <div className="flex items-start gap-2 bg-green-50 border border-green-200 text-green-700 text-sm rounded-xl px-4 py-3">
+                    <span className="text-green-500 mt-0.5">✓</span>
+                    <span>{registeredMsg}</span>
+                  </div>
+                )}
 
                 {/* Error banner */}
                 {error && (

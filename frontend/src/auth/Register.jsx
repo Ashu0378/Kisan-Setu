@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Sprout, MapPin, Loader2, AlertCircle } from 'lucide-react';
+import { Sprout, MapPin, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { useAuth } from '../contexts/AuthContext';
+import { authService } from '../services/authService';
 
 const INDIAN_STATES = [
   'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat',
@@ -23,6 +23,7 @@ export function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [locating, setLocating] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -126,7 +127,8 @@ export function Register() {
     setLoading(true);
     setError('');
     try {
-      await register({
+      // Register via API only — do NOT auto-login; redirect to sign-in
+      await authService.register({
         name: formData.name,
         phone: formData.phone,
         password: formData.password,
@@ -135,7 +137,19 @@ export function Register() {
         landSize: formData.landSize ? Number(formData.landSize) : undefined,
         preferredLanguage: formData.preferredLanguage,
       });
-      navigate('/');
+      // Show brief success screen then redirect to sign-in
+      setSuccess(true);
+      setTimeout(() => {
+        navigate('/signin', {
+          state: {
+            registered: true,
+            phone: formData.phone,
+            message: lang === 'en'
+              ? `Welcome, ${formData.name}! Your account has been created. Please sign in.`
+              : `स्वागत है, ${formData.name}! आपका खाता बना दिया गया है। कृपया साइन इन करें।`,
+          },
+        });
+      }, 1800);
     } catch (err) {
       setError(err.message || (lang === 'en' ? 'Registration failed. Please try again.' : 'पंजीकरण विफल। कृपया पुनः प्रयास करें।'));
       setStep(1);
@@ -143,6 +157,26 @@ export function Register() {
       setLoading(false);
     }
   };
+
+  // ── Success screen shown briefly before redirecting to /signin ──
+  if (success) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-brand-50 via-surface-50 to-brand-100 flex items-center justify-center p-4">
+        <div className="flex flex-col items-center gap-4 animate-fade-in text-center">
+          <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center shadow-lg">
+            <CheckCircle2 className="w-12 h-12 text-green-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-surface-800">
+            {lang === 'en' ? 'Account Created!' : 'खाता बन गया!'}
+          </h2>
+          <p className="text-surface-500 max-w-xs">
+            {lang === 'en' ? 'Redirecting you to sign in…' : 'साइन इन पर भेजा जा रहा है…'}
+          </p>
+          <Loader2 className="w-6 h-6 text-brand-500 animate-spin mt-2" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-50 via-surface-50 to-brand-100 flex items-center justify-center p-4">
