@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import { Layout } from './dashboard/Layout';
 import { Dashboard } from './dashboard/Dashboard';
 import { Register } from './auth/Register';
@@ -16,23 +18,35 @@ import { VoiceAssistant } from './components/VoiceAssistant';
 function App() {
   return (
     <LanguageProvider>
-      <Router>
-        <VoiceAssistant />
-        <Routes>
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="crop-planner" element={<CropPlanner />} />
-            <Route path="yield-predictor" element={<YieldPredictor />} />
-            <Route path="coldguard" element={<ColdGuard />} />
-            <Route path="mandi-optimizer" element={<MandiOptimizer />} />
-            <Route path="sell-hold" element={<SellHoldAdvisor />} />
-            <Route path="schemematch" element={<SchemeMatch />} />
-          </Route>
-        </Routes>
-      </Router>
+      <AuthProvider>
+        <Router>
+          <VoiceAssistant />
+          <Routes>
+            {/* Public routes */}
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/register" element={<Register />} />
+
+            {/* Protected routes */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Dashboard />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="crop-planner" element={<CropPlanner />} />
+              <Route path="yield-predictor" element={<YieldPredictor />} />
+              <Route path="coldguard" element={<ColdGuard />} />
+              <Route path="mandi-optimizer" element={<MandiOptimizer />} />
+              <Route path="sell-hold" element={<SellHoldAdvisor />} />
+              <Route path="schemematch" element={<SchemeMatch />} />
+            </Route>
+          </Routes>
+        </Router>
+      </AuthProvider>
     </LanguageProvider>
   );
 }

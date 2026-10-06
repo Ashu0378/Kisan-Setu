@@ -2,40 +2,61 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Sprout, MapPin, Loader2 } from 'lucide-react';
+import { Sprout, MapPin, Loader2, AlertCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
+
+const INDIAN_STATES = [
+  'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat',
+  'Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh',
+  'Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab',
+  'Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh',
+  'Uttarakhand','West Bengal',
+];
 
 export function Register() {
   const navigate = useNavigate();
   const { lang, toggleLanguage } = useLanguage();
+  const { register } = useAuth();
+
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [locating, setLocating] = useState(false);
+
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
+    password: '',
+    confirmPassword: '',
+    state: '',
+    district: '',
     landSize: '',
     soilType: 'Alluvial',
-    district: '',
+    preferredLanguage: 'hi',
     lat: null,
-    lng: null
+    lng: null,
   });
 
-  const [locating, setLocating] = useState(false);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (error) setError('');
+  };
 
   const handleGetLocation = () => {
     setLocating(true);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setFormData(prev => ({
+          setFormData((prev) => ({
             ...prev,
             lat: position.coords.latitude,
             lng: position.coords.longitude,
-            district: "Detected Automatically"
+            district: prev.district || 'Detected Automatically',
           }));
           setLocating(false);
         },
-        (error) => {
-          console.error("Error getting location", error);
+        () => {
           setLocating(false);
           alert(lang === 'en' ? 'Could not get location.' : 'स्थान प्राप्त नहीं हो सका।');
         }
@@ -45,17 +66,45 @@ export function Register() {
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleNext = (e) => {
+    e.preventDefault();
+    if (!formData.name || !formData.phone) {
+      setError(lang === 'en' ? 'Name and phone are required.' : 'नाम और फ़ोन आवश्यक हैं।');
+      return;
+    }
+    if (formData.password.length < 6) {
+      setError(lang === 'en' ? 'Password must be at least 6 characters.' : 'पासवर्ड कम से कम 6 अक्षर का होना चाहिए।');
+      return;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      setError(lang === 'en' ? 'Passwords do not match.' : 'पासवर्ड मेल नहीं खाते।');
+      return;
+    }
+    setError('');
+    setStep(2);
   };
 
-  const handleNext = () => setStep(2);
-  
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    localStorage.setItem('kisanSetuUser', JSON.stringify(formData));
-    console.log("Registered Profile:", formData);
-    navigate('/');
+    setLoading(true);
+    setError('');
+    try {
+      await register({
+        name: formData.name,
+        phone: formData.phone,
+        password: formData.password,
+        state: formData.state,
+        district: formData.district,
+        landSize: formData.landSize ? Number(formData.landSize) : undefined,
+        preferredLanguage: formData.preferredLanguage,
+      });
+      navigate('/');
+    } catch (err) {
+      setError(err.message || (lang === 'en' ? 'Registration failed. Please try again.' : 'पंजीकरण विफल। कृपया पुनः प्रयास करें।'));
+      setStep(1);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -77,42 +126,85 @@ export function Register() {
           <p className="text-surface-500 mt-2 text-center animate-slide-up" style={{ animationDelay: '150ms' }}>
             {lang === 'en' ? 'Create your digital farm profile for smart insights.' : 'स्मार्ट इनसाइट्स के लिए अपना डिजिटल फार्म प्रोफाइल बनाएं।'}
           </p>
+          {/* Step indicator */}
+          <div className="flex gap-2 mt-4">
+            {[1, 2].map((s) => (
+              <div key={s} className={`h-2 w-8 rounded-full transition-all duration-300 ${step >= s ? 'bg-brand-500' : 'bg-surface-200'}`} />
+            ))}
+          </div>
         </div>
 
         <Card className="animate-slide-up" style={{ animationDelay: '200ms' }}>
-          <form onSubmit={handleRegister}>
+          <form onSubmit={step === 1 ? handleNext : handleRegister}>
             <CardContent className="pt-6">
+
+              {/* Error banner */}
+              {error && (
+                <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3 mb-4">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
+
               {step === 1 ? (
                 <div className="space-y-4 animate-fade-in">
                   <div>
                     <label className="block text-sm font-medium text-surface-700 mb-1">
                       {lang === 'en' ? 'Full Name' : 'पूरा नाम'}
                     </label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       name="name"
                       required
                       value={formData.name}
                       onChange={handleChange}
                       className="w-full px-4 py-2 rounded-xl border border-surface-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
-                      placeholder={lang === 'en' ? "e.g., Ramesh Kumar" : "जैसे, रमेश कुमार"}
+                      placeholder={lang === 'en' ? 'e.g., Ramesh Kumar' : 'जैसे, रमेश कुमार'}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 mb-1">
                       {lang === 'en' ? 'Phone Number' : 'फ़ोन नंबर'}
                     </label>
-                    <input 
-                      type="tel" 
+                    <input
+                      type="tel"
                       name="phone"
                       required
                       value={formData.phone}
                       onChange={handleChange}
                       className="w-full px-4 py-2 rounded-xl border border-surface-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
-                      placeholder="+91"
+                      placeholder="9876543210"
                     />
                   </div>
-                  <Button type="button" className="w-full mt-4" onClick={handleNext}>
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 mb-1">
+                      {lang === 'en' ? 'Password' : 'पासवर्ड'}
+                    </label>
+                    <input
+                      type="password"
+                      name="password"
+                      required
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 rounded-xl border border-surface-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 mb-1">
+                      {lang === 'en' ? 'Confirm Password' : 'पासवर्ड की पुष्टि करें'}
+                    </label>
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      required
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 rounded-xl border border-surface-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  <Button type="submit" className="w-full mt-4">
                     {lang === 'en' ? 'Continue' : 'जारी रखें'}
                   </Button>
                 </div>
@@ -120,47 +212,30 @@ export function Register() {
                 <div className="space-y-4 animate-fade-in">
                   <div>
                     <label className="block text-sm font-medium text-surface-700 mb-1">
-                      {lang === 'en' ? 'Land Size (Acres)' : 'जमीन का आकार (एकड़)'}
+                      {lang === 'en' ? 'State' : 'राज्य'}
                     </label>
-                    <input 
-                      type="number" 
-                      name="landSize"
-                      required
-                      value={formData.landSize}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 rounded-xl border border-surface-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
-                      placeholder="e.g., 5"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-surface-700 mb-1">
-                      {lang === 'en' ? 'Soil Type' : 'मिट्टी का प्रकार'}
-                    </label>
-                    <select 
-                      name="soilType"
-                      value={formData.soilType}
+                    <select
+                      name="state"
+                      value={formData.state}
                       onChange={handleChange}
                       className="w-full px-4 py-2 rounded-xl border border-surface-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
                     >
-                      <option value="Alluvial">Alluvial (जलोढ़)</option>
-                      <option value="Black">Black (काली)</option>
-                      <option value="Red">Red (लाल)</option>
-                      <option value="Laterite">Laterite (लेटराइट)</option>
+                      <option value="">{lang === 'en' ? 'Select state' : 'राज्य चुनें'}</option>
+                      {INDIAN_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-surface-700 mb-1">
-                      {lang === 'en' ? 'Location (GPS)' : 'स्थान (GPS)'}
+                      {lang === 'en' ? 'District' : 'जिला'}
                     </label>
                     <div className="flex gap-2">
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         name="district"
-                        required
                         value={formData.district}
                         onChange={handleChange}
                         className="w-full px-4 py-2 rounded-xl border border-surface-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
-                        placeholder={lang === 'en' ? "e.g., Karnal, Haryana" : "जैसे, करनाल, हरियाणा"}
+                        placeholder={lang === 'en' ? 'e.g., Karnal' : 'जैसे, करनाल'}
                       />
                       <Button type="button" variant="outline" onClick={handleGetLocation} className="whitespace-nowrap px-3" disabled={locating}>
                         {locating ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4 text-brand-600" />}
@@ -172,17 +247,57 @@ export function Register() {
                       </p>
                     )}
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 mb-1">
+                      {lang === 'en' ? 'Land Size (Acres)' : 'जमीन का आकार (एकड़)'}
+                    </label>
+                    <input
+                      type="number"
+                      name="landSize"
+                      value={formData.landSize}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 rounded-xl border border-surface-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+                      placeholder="e.g., 5"
+                      min="0"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-surface-700 mb-1">
+                      {lang === 'en' ? 'Preferred Language' : 'पसंदीदा भाषा'}
+                    </label>
+                    <select
+                      name="preferredLanguage"
+                      value={formData.preferredLanguage}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 rounded-xl border border-surface-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+                    >
+                      <option value="hi">हिन्दी</option>
+                      <option value="en">English</option>
+                      <option value="mr">मराठी</option>
+                      <option value="pa">ਪੰਜਾਬੀ</option>
+                      <option value="gu">ગુજરાતી</option>
+                      <option value="ta">தமிழ்</option>
+                      <option value="te">తెలుగు</option>
+                    </select>
+                  </div>
                   <div className="flex gap-2 mt-4">
-                    <Button type="button" variant="secondary" className="w-1/3" onClick={() => setStep(1)}>
+                    <Button type="button" variant="secondary" className="w-1/3" onClick={() => { setStep(1); setError(''); }} disabled={loading}>
                       {lang === 'en' ? 'Back' : 'पीछे'}
                     </Button>
-                    <Button type="submit" className="flex-1">
-                      {lang === 'en' ? 'Create Profile' : 'प्रोफ़ाइल बनाएं'}
+                    <Button type="submit" className="flex-1" disabled={loading}>
+                      {loading ? (
+                        <span className="flex items-center justify-center gap-2">
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          {lang === 'en' ? 'Creating…' : 'बना रहे हैं…'}
+                        </span>
+                      ) : (
+                        lang === 'en' ? 'Create Profile' : 'प्रोफ़ाइल बनाएं'
+                      )}
                     </Button>
                   </div>
                 </div>
               )}
-              
+
               <div className="mt-6 text-center text-sm text-surface-600 border-t border-surface-100 pt-4">
                 {lang === 'en' ? 'Already have an account?' : 'पहले से खाता है?'}{' '}
                 <Link to="/signin" className="text-brand-600 hover:text-brand-700 font-bold">

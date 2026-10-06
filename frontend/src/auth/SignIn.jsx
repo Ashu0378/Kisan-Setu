@@ -1,26 +1,41 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Sprout } from 'lucide-react';
+import { Sprout, Loader2, AlertCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export function SignIn() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { lang, toggleLanguage } = useLanguage();
-  const [formData, setFormData] = useState({
-    phone: '',
-    password: ''
-  });
+  const { login } = useAuth();
+
+  const [formData, setFormData] = useState({ phone: '', password: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  // Redirect to the page the user came from, or home
+  const from = location.state?.from?.pathname || '/';
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (error) setError('');
   };
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
-    console.log("Signing in:", formData);
-    navigate('/');
+    setLoading(true);
+    setError('');
+    try {
+      await login({ phone: formData.phone, password: formData.password });
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError(err.message || (lang === 'en' ? 'Login failed. Please try again.' : 'लॉगिन विफल। कृपया पुनः प्रयास करें।'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -48,35 +63,46 @@ export function SignIn() {
           <form onSubmit={handleSignIn}>
             <CardContent className="pt-6">
               <div className="space-y-4 animate-fade-in">
+
+                {/* Error banner */}
+                {error && (
+                  <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-sm font-medium text-surface-700 mb-1">
                     {lang === 'en' ? 'Phone Number' : 'फ़ोन नंबर'}
                   </label>
-                  <input 
-                    type="tel" 
+                  <input
+                    type="tel"
                     name="phone"
                     required
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full px-4 py-2 rounded-xl border border-surface-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
-                    placeholder="+91"
+                    placeholder="9876543210"
+                    disabled={loading}
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-surface-700 mb-1">
-                    {lang === 'en' ? 'Password / OTP' : 'पासवर्ड / OTP'}
+                    {lang === 'en' ? 'Password' : 'पासवर्ड'}
                   </label>
-                  <input 
-                    type="password" 
+                  <input
+                    type="password"
                     name="password"
                     required
                     value={formData.password}
                     onChange={handleChange}
                     className="w-full px-4 py-2 rounded-xl border border-surface-200 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
                     placeholder="••••••••"
+                    disabled={loading}
                   />
                 </div>
-                
+
                 <div className="flex items-center justify-between mt-2">
                   <label className="flex items-center gap-2 text-sm text-surface-600">
                     <input type="checkbox" className="rounded text-brand-600 focus:ring-brand-500" />
@@ -87,10 +113,17 @@ export function SignIn() {
                   </button>
                 </div>
 
-                <Button type="submit" className="w-full mt-4">
-                  {lang === 'en' ? 'Sign In' : 'साइन इन करें'}
+                <Button type="submit" className="w-full mt-4" disabled={loading}>
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      {lang === 'en' ? 'Signing in…' : 'साइन इन हो रहा है…'}
+                    </span>
+                  ) : (
+                    lang === 'en' ? 'Sign In' : 'साइन इन करें'
+                  )}
                 </Button>
-                
+
                 <div className="mt-4 text-center text-sm text-surface-600">
                   {lang === 'en' ? "Don't have an account?" : "खाता नहीं है?"}{' '}
                   <Link to="/register" className="text-brand-600 hover:text-brand-700 font-bold">
