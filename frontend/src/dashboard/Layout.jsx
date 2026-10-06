@@ -20,6 +20,7 @@ import {
 import { cn } from '../lib/utils';
 import { Button } from '../components/ui/Button';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const navigation = [
   { name: 'Dashboard', translationKey: 'dashboard', href: '/', icon: LayoutDashboard },
@@ -37,6 +38,12 @@ export function Layout() {
   const [showHelp, setShowHelp] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const { lang, t, toggleLanguage } = useLanguage();
+  const { user, logout } = useAuth();
+
+  const handleSignOut = () => {
+    setShowProfile(false);
+    logout();
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-brand-50 via-surface-50 to-brand-100 flex">
@@ -191,8 +198,8 @@ export function Layout() {
               {showProfile && (
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-surface-200 overflow-hidden z-50 animate-fade-in">
                   <div className="p-3 border-b border-surface-100 bg-surface-50">
-                    <p className="text-sm font-semibold text-surface-900">Ramesh Kumar</p>
-                    <p className="text-xs text-surface-500">+91 98765 43210</p>
+                    <p className="text-sm font-semibold text-surface-900">{user?.name || (lang === 'en' ? 'Farmer' : 'किसान')}</p>
+                    <p className="text-xs text-surface-500">{user?.phone ? `+91 ${user.phone}` : ''}</p>
                   </div>
                   <div className="py-1">
                     <Link to="/profile" className="w-full text-left px-4 py-2 text-sm text-surface-700 hover:bg-surface-50 hover:text-brand-600 flex items-center gap-2" onClick={() => setShowProfile(false)}>
@@ -205,9 +212,9 @@ export function Layout() {
                       <Settings className="w-4 h-4" /> {lang === 'en' ? 'App Settings' : 'ऐप सेटिंग्स'}
                     </button>
                     <div className="border-t border-surface-100 my-1"></div>
-                    <Link to="/signin" className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2" onClick={() => setShowProfile(false)}>
+                    <button onClick={handleSignOut} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
                       <LogOut className="w-4 h-4" /> {lang === 'en' ? 'Sign Out' : 'लॉग आउट'}
-                    </Link>
+                    </button>
                   </div>
                 </div>
               )}

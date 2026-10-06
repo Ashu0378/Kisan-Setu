@@ -18,8 +18,10 @@ const getProfile = async (req, res, next) => {
 const updateProfile = async (req, res, next) => {
   try {
     const allowedFields = [
-      'name', 'email', 'state', 'district', 'village',
-      'landSize', 'preferredLanguage', 'profilePicture',
+      'name', 'email', 'state', 'district', 'village', 'pincode',
+      'landSize', 'preferredLanguage', 'profilePicture', 'age',
+      'kcc', 'soilType', 'irrigation', 'equipment', 'primaryCrop',
+      'secondaryCrop', 'livestock', 'storageCapacity',
     ];
 
     const updates = {};

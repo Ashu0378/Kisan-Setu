@@ -40,4 +40,29 @@ export const authService = {
     });
     return handleResponse(res);
   },
+
+  /**
+   * Get user profile
+   */
+  getProfile: async (token) => {
+    const res = await fetch(`${API_URL}/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return handleResponse(res);
+  },
+
+  /**
+   * Update user profile
+   */
+  updateProfile: async (profileData, token) => {
+    const res = await fetch(`${API_URL}/profile`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(profileData),
+    });
+    return handleResponse(res);
+  },
 };

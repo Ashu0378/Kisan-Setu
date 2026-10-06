@@ -4,9 +4,11 @@ import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { CloudRain, Sprout, TrendingUp, AlertTriangle, Loader2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export function Dashboard() {
   const { t, lang } = useLanguage();
+  const { user } = useAuth();
   
   const [weather, setWeather] = useState({ temp: null, desc: '', risk: t('low'), loading: true });
 
@@ -58,7 +60,9 @@ export function Dashboard() {
     <div className="max-w-6xl mx-auto space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="animate-slide-up">
-          <h1 className="text-2xl font-bold text-surface-900">{t('welcome')}</h1>
+          <h1 className="text-2xl font-bold text-surface-900">
+            {user?.name ? `${t('welcome')}, ${user.name}` : t('welcome')}
+          </h1>
           <p className="text-surface-500 mt-1">{t('subtitle')}</p>
         </div>
         <Button className="animate-slide-up" style={{ animationDelay: '100ms' }}>{t('updateProfile')}</Button>
