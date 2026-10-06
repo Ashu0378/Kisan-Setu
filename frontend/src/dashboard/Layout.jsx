@@ -107,8 +107,10 @@ export function Layout() {
               <UserCircle className="w-6 h-6 text-brand-700" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-surface-900 truncate">Ramesh Kumar</p>
-              <p className="text-xs text-surface-500 truncate">{t('myProfile')}</p>
+              <p className="text-sm font-semibold text-surface-900 truncate">
+                {user?.name || (lang === 'en' ? 'Farmer' : 'किसान')}
+              </p>
+              <p className="text-xs text-surface-500 truncate">{user?.phone ? `+91 ${user.phone}` : t('myProfile')}</p>
             </div>
           </Link>
         </div>

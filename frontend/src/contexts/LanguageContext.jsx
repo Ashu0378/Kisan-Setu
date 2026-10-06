@@ -10,7 +10,7 @@ const translations = {
     mandiOptimizer: "Mandi Optimizer",
     sellHold: "Sell/Hold Advisor",
     schemeMatch: "SchemeMatch AI",
-    welcome: "Welcome back, Ramesh",
+    welcome: "Welcome back",
     subtitle: "Here is the latest actionable intelligence for your farm.",
     updateProfile: "Update Farm Profile",
     currentCrop: "Current Crop",
