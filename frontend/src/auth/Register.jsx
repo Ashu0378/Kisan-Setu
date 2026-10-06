@@ -17,7 +17,6 @@ const INDIAN_STATES = [
 export function Register() {
   const navigate = useNavigate();
   const { lang, toggleLanguage } = useLanguage();
-  const { register } = useAuth();
 
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
