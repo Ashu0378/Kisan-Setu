@@ -2,8 +2,6 @@
 
 **An AI-Powered Farm-to-Profit Decision & Support Platform**
 
-*Smart India Hackathon (SIH) 2026 — Team Submission*
-
 > From "What should I grow?" to "Where, when, and how should I sell?" — one intelligent system connecting the entire agricultural value chain to maximize farmer profit and prevent post-harvest loss.
 
 ---
@@ -118,18 +116,4 @@ cd backend
 pip install -r requirements.txt
 uvicorn main:app --reload
 ```
-
-## Team
-
-| Name | Role |
-|---|---|
-| | Backend / API |
-| | Backend / API |
-| | Frontend — Dashboard & Profile |
-| | Frontend — Crop Planner / Yield Predictor |
-| | Frontend — ColdGuard / Mandi Optimizer |
-| | Frontend — SchemeMatch / Voice-Vision UI |
-
----
-
 *"Converting agricultural information into the next best action."*
