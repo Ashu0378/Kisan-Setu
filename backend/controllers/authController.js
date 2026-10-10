@@ -4,9 +4,12 @@ const User = require('../models/User');
 // Generate JWT token
 const generateToken = (id) => {
   const secret = (process.env.JWT_SECRET && process.env.JWT_SECRET.trim()) || 'kisansetusecretkey123';
-  return jwt.sign({ id: String(id) }, secret, {
-    expiresIn: 2592000, // 30 days in seconds
-  });
+  try {
+    return jwt.sign({ id: String(id) }, secret, { expiresIn: '30d' });
+  } catch (err) {
+    console.error('JWT sign with expiresIn failed, fallback applied:', err.message);
+    return jwt.sign({ id: String(id) }, secret);
+  }
 };
 
 // @desc    Register a new user
