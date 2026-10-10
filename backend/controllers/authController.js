@@ -4,7 +4,7 @@ const User = require('../models/User');
 // Generate JWT token
 const generateToken = (id) => {
   const secret = (process.env.JWT_SECRET && process.env.JWT_SECRET.trim()) || 'kisansetusecretkey123';
-  return jwt.sign({ id }, secret, {
+  return jwt.sign({ id: String(id) }, secret, {
     expiresIn: '30d',
   });
 };
@@ -30,7 +30,7 @@ const register = async (req, res, next) => {
       preferredLanguage,
     });
 
-    const token = generateToken(user._id);
+    const token = generateToken(user._id.toString());
 
     res.status(201).json({
       success: true,
@@ -65,7 +65,7 @@ const login = async (req, res, next) => {
       return res.status(401).json({ success: false, message: 'Invalid phone or password' });
     }
 
-    const token = generateToken(user._id);
+    const token = generateToken(user._id.toString());
 
     res.json({
       success: true,
