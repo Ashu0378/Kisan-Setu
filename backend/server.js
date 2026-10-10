@@ -24,13 +24,20 @@ const app = express();
 app.use(helmet());
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl) or any localhost port
-    if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1')) {
+    // Allow requests with no origin (mobile apps, curl), localhost, or cloud deployed domains
+    if (
+      !origin || 
+      origin.includes('localhost') || 
+      origin.includes('127.0.0.1') ||
+      origin.includes('vercel.app') ||
+      origin.includes('onrender.com') ||
+      origin.includes('netlify.app')
+    ) {
       return callback(null, true);
     }
     const allowedOrigin = process.env.FRONTEND_URL;
     if (allowedOrigin && origin === allowedOrigin) return callback(null, true);
-    callback(new Error('Not allowed by CORS'));
+    callback(null, true); // Permissive fallback for production deployment
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
