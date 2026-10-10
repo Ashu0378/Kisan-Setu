@@ -5,7 +5,7 @@ const User = require('../models/User');
 const generateToken = (id) => {
   const secret = (process.env.JWT_SECRET && process.env.JWT_SECRET.trim()) || 'kisansetusecretkey123';
   return jwt.sign({ id: String(id) }, secret, {
-    expiresIn: '30d',
+    expiresIn: 2592000, // 30 days in seconds
   });
 };
 
