@@ -47,7 +47,17 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Health check
+// Root & Health check
+app.get('/', (req, res) => {
+  res.json({ 
+    success: true, 
+    service: 'KisanSetu API Server 🌾', 
+    status: 'Active', 
+    health: '/api/health',
+    documentation: 'https://github.com/Ashu0378/Kisan-Setu' 
+  });
+});
+
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'KisanSetu API is running 🌾', timestamp: new Date() });
 });
