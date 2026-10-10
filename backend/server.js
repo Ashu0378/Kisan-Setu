@@ -59,7 +59,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, message: 'KisanSetu API is running 🌾', timestamp: new Date() });
+  res.json({ success: true, message: 'KisanSetu API is running 🌾', buildVersion: 'v1.0.5-no-jwt-expire', timestamp: new Date() });
 });
 
 // API Routes
